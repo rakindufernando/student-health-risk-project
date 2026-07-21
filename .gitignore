@@ -1,0 +1,36 @@
+# Python generated files
+__pycache__/
+*.py[cod]
+*.log
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment variables
+.env
+.env.*
+
+# Jupyter temporary files
+.ipynb_checkpoints/
+
+# Flask local files
+instance/
+
+# IDE files
+.vscode/
+.idea/
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Raw competition datasets
+data/*.csv
+data/*.xls
+data/*.xlsx
+
+# Temporary prediction outputs
+outputs/
+temp/
