@@ -1,0 +1,4 @@
+Model,Training Balanced Accuracy,Validation Balanced Accuracy,Normal Accuracy,Macro F1 Score
+Decision Tree,0.8977,0.8974,0.8289,0.6995
+Logistic Regression,0.8566,0.8574,0.798,0.6577
+Dummy Classifier,0.3333,0.3333,0.8587,0.308

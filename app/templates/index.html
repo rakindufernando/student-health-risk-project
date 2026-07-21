@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Machine learning application for student health risk prediction">
+    <title>Student Health Risk Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="container navigation">
+            <a href="{{ url_for('home') }}" class="logo">
+                Student Health AI
+            </a>
+
+            <nav aria-label="Main navigation">
+                <a href="{{ url_for('home') }}" class="active-link">Home</a>
+                <a href="{{ url_for('about') }}">About</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero-section">
+            <div class="container hero-content">
+                <p class="small-heading">Machine Learning Application</p>
+                <h1>Student Health Risk Prediction System</h1>
+                <p>
+                    Enter supported health and lifestyle information to receive a
+                    prediction from the trained XGBoost model.
+                </p>
+                <a href="#prediction-form" class="primary-button">
+                    Start Prediction
+                </a>
+            </div>
+        </section>
+
+        <section class="information-section">
+            <div class="container information-grid">
+                <article class="information-card">
+                    <h2>Three Classes</h2>
+                    <p>The model predicts Fit, At-risk, or Unhealthy.</p>
+                </article>
+
+                <article class="information-card">
+                    <h2>Saved Model</h2>
+                    <p>
+                        The application loads the trained pipeline and does not retrain
+                        the model during prediction.
+                    </p>
+                </article>
+
+                <article class="information-card">
+                    <h2>Privacy</h2>
+                    <p>
+                        Submitted values are processed for the current prediction and
+                        are not saved in a database.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <section class="prediction-section" id="prediction-form">
+            <div class="container">
+                <div class="section-heading">
+                    <p class="small-heading">Prediction Form</p>
+                    <h2>Student Information</h2>
+                    <p>
+                        The accepted numerical ranges below are based on the training
+                        dataset. They are not medical safety ranges.
+                    </p>
+                </div>
+
+                {% if not service_status.ready %}
+                    <div class="service-message" role="alert">
+                        The model service is unavailable. Check the model files and
+                        install the package versions listed in requirements.txt.
+                    </div>
+                {% endif %}
+
+                {% if error_message %}
+                    <div class="error-message" role="alert" tabindex="-1">
+                        {{ error_message }}
+                    </div>
+                {% endif %}
+
+                <form
+                    action="{{ url_for('predict') }}"
+                    method="POST"
+                    class="prediction-form"
+                    novalidate
+                >
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                    <div class="form-section">
+                        <h3>Physical Health Information</h3>
+
+                        <div class="form-grid">
+                            {% for feature_name, field in numeric_fields.items() %}
+                                <div class="form-group">
+                                    <label for="{{ feature_name }}">
+                                        {{ field["label"] }}
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        id="{{ feature_name }}"
+                                        name="{{ feature_name }}"
+                                        min="{{ field['minimum'] }}"
+                                        max="{{ field['maximum'] }}"
+                                        step="{{ field['step'] }}"
+                                        placeholder="{{ field['placeholder'] }}"
+                                        value="{{ previous_data.get(feature_name, '') if previous_data else '' }}"
+                                        aria-describedby="{{ feature_name }}_help"
+                                        required
+                                    >
+
+                                    <small id="{{ feature_name }}_help">
+                                        {{ field["minimum"] }} to {{ field["maximum"] }}
+                                        {{ field["unit"] }}
+                                    </small>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Lifestyle Information</h3>
+
+                        <div class="form-grid">
+                            {% for feature_name, field in categorical_fields.items() %}
+                                <div class="form-group">
+                                    <label for="{{ feature_name }}">
+                                        {{ field["label"] }}
+                                    </label>
+
+                                    <select
+                                        id="{{ feature_name }}"
+                                        name="{{ feature_name }}"
+                                        required
+                                    >
+                                        <option value="">Select an option</option>
+
+                                        {% for option_value, option_label in field["options"].items() %}
+                                            <option
+                                                value="{{ option_value }}"
+                                                {% if previous_data and previous_data.get(feature_name) == option_value %}
+                                                    selected
+                                                {% endif %}
+                                            >
+                                                {{ option_label }}
+                                            </option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="consent-group">
+                        <input
+                            type="checkbox"
+                            id="consent"
+                            name="consent"
+                            value="accepted"
+                            {% if previous_data and previous_data.get('consent') == 'accepted' %}
+                                checked
+                            {% endif %}
+                            required
+                        >
+                        <label for="consent">
+                            I understand that this prediction is generated by a machine
+                            learning model and is not a medical diagnosis.
+                        </label>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="reset" class="secondary-button">
+                            Clear Form
+                        </button>
+
+                        <button
+                            type="submit"
+                            class="primary-button"
+                            {% if not service_status.ready %}disabled{% endif %}
+                        >
+                            Predict Health Condition
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <footer class="main-footer">
+        <div class="container footer-content">
+            <p>Student Health Risk Prediction System</p>
+            <p>Trained, designed and developed by Rakindu Fernando</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

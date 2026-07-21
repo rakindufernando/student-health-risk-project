@@ -4,33 +4,70 @@ __pycache__/
 *.log
 
 # Virtual environments
-.venv/
 venv/
+.venv/
 env/
+ENV/
 
 # Environment variables
 .env
 .env.*
+!.env.example
 
 # Jupyter temporary files
 .ipynb_checkpoints/
+*/.ipynb_checkpoints/
+*.nbconvert.ipynb
+
+# Testing and coverage files
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
 
 # Flask local files
 instance/
+flask_session/
+*.sqlite
+*.sqlite3
+*.db
 
 # IDE files
 .vscode/
 .idea/
+*.code-workspace
 
 # Operating system files
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Raw competition datasets
-data/*.csv
-data/*.xls
-data/*.xlsx
+# Raw Kaggle competition datasets
+data/kaggle/raw/*
+!data/kaggle/raw/.gitkeep
 
-# Temporary prediction outputs
-outputs/
+# Other raw dataset files
+data/**/*.csv
+data/**/*.xls
+data/**/*.xlsx
+data/**/*.zip
+
+# Allow original practice data
+!data/practice/
+!data/practice/**
+
+# Do not publish generated Kaggle submissions
+outputs/submissions/*.csv
+!outputs/submissions/.gitkeep
+
+# Temporary output files
+outputs/temp/
+outputs/tmp/
 temp/
+tmp/
+
+# Model and package caches
+.cache/
+joblib_cache/
+pip-wheel-metadata/
