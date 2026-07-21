@@ -1,0 +1,29 @@
+{
+  "model_name": "XGBoost",
+  "model_type": "Ensemble classification model",
+  "model_version": "1.1",
+  "training_date": "2026-07-18",
+  "training_rows": 690088,
+  "classes": [
+    "at-risk",
+    "fit",
+    "unhealthy"
+  ],
+  "validation_balanced_accuracy": 0.9097,
+  "training_balanced_accuracy": 0.9113,
+  "macro_f1_score": 0.7541,
+  "generalisation_gap": 0.0016,
+  "primary_metric": "balanced_accuracy",
+  "feature_count": 13,
+  "top_features": [
+    "stress_level",
+    "physical_activity_level",
+    "sleep_duration",
+    "smoking_alcohol",
+    "sleep_quality",
+    "bmi",
+    "exercise_duration"
+  ],
+  "required_scikit_learn_version": "1.9.0",
+  "notes": "Update this file after retraining or changing the final model."
+}
