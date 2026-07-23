@@ -5,169 +5,168 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Student health prediction result">
     <title>Prediction Result</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/logo.svg') }}" type="image/svg+xml">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-
     <header class="main-header">
         <div class="container navigation">
-            <a href="{{ url_for('home') }}" class="logo">
-                Student Health AI
+            <a href="{{ url_for('home') }}" class="logo" aria-label="Student Health AI home">
+                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="" class="logo-image">
+                <span class="logo-copy"><strong>Student Health AI</strong><small>Risk Prediction System</small></span>
             </a>
-
-            <nav aria-label="Main navigation">
-                <a href="{{ url_for('home') }}">Home</a>
-                <a href="{{ url_for('about') }}">About</a>
-            </nav>
+            <nav aria-label="Main navigation"><a href="{{ url_for('home') }}">Home</a><a href="{{ url_for('about') }}">About</a></nav>
         </div>
     </header>
 
     <main class="result-page">
         <section class="result-section">
-            <div class="container">
+            <div class="container result-layout">
                 {% set result_class = prediction|replace('-', '_') %}
 
-                <div class="result-card {{ result_class }}">
-                    <p class="result-label">Predicted Health Condition</p>
-                    <h1 class="result-value">{{ prediction|title }}</h1>
+                <div class="result-outcome {{ result_class }}">
+                    <div class="outcome-grid" aria-hidden="true"></div>
+                    <div class="outcome-topline">
+                        <span>PREDICTION OUTPUT</span>
+                        <span>{{ processing_time_ms }} ms</span>
+                    </div>
 
+                    <div class="outcome-core">
+                        <div class="outcome-orbit">
+                            <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="">
+                        </div>
+                        <p>Predicted Health Condition</p>
+                        <h1>{{ prediction|title }}</h1>
+                        <div class="result-summary-chips">
+                            <span>{{ model_name }}</span>
+                            <span>Version {{ model_version }}</span>
+                        </div>
+                    </div>
+
+                    <div class="outcome-copy">
+                        {% if prediction == "fit" %}
+                            <h2>Fit Prediction</h2>
+                            <p>The entered values were classified as Fit by the model. Review the probability breakdown and submitted information below.</p>
+                        {% elif prediction == "at-risk" %}
+                            <h2>At-risk Prediction</h2>
+                            <p>The entered values were classified as At-risk by the model. A qualified professional should be consulted for health concerns.</p>
+                        {% elif prediction == "unhealthy" %}
+                            <h2>Unhealthy Prediction</h2>
+                            <p>The entered values were classified as Unhealthy by the model. This result must not replace professional advice.</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="result-analysis">
                     {% if model_probability is not none %}
-                        <div class="confidence-area">
-                            <p>Model probability for the predicted class</p>
-                            <strong>{{ model_probability }}%</strong>
-
-                            <div class="confidence-bar" aria-hidden="true">
-                                <div
-                                    class="confidence-fill probability-animation"
-                                    data-width="{{ model_probability }}%"
-                                ></div>
+                        <div class="probability-hero {{ result_class }}">
+                            <div class="probability-score">
+                                <span>MODEL PROBABILITY</span>
+                                <strong>{{ model_probability }}%</strong>
+                                <p>Probability assigned to the predicted class.</p>
                             </div>
+                            <div class="confidence-bar" aria-hidden="true">
+                                <div class="confidence-fill probability-animation" data-width="{{ model_probability }}%"></div>
+                            </div>
+                            <div class="probability-result-label">
+                                <span>Predicted result</span>
+                                <strong>{{ prediction|title }}</strong>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    {% if class_probabilities %}
+                        <div class="probability-matrix">
+                            <div class="result-panel-heading">
+                                <span>CLASS BREAKDOWN</span>
+                                <h2>Probability for Every Class</h2>
+                            </div>
+                            <div class="probability-list">
+                                {% for class_name, probability in class_probabilities.items() %}
+                                    {% set class_key = class_name|lower|replace('-', '_') %}
+                                    <div class="probability-row probability-{{ class_key }}{% if class_name|lower == prediction|lower %} is-predicted{% endif %}">
+                                        <div class="probability-heading">
+                                            <span>{{ class_name|title }}{% if class_name|lower == prediction|lower %}<small>Predicted</small>{% endif %}</span>
+                                            <strong>{{ probability }}%</strong>
+                                        </div>
+                                        <div class="probability-track" aria-hidden="true"><div class="probability-fill probability-animation" data-width="{{ probability }}%"></div></div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <p class="probability-note">These values are model probabilities. They do not represent medical certainty.</p>
                         </div>
                     {% endif %}
 
                     {% if low_probability_warning %}
                         <div class="uncertainty-warning" role="alert">
-                            The model is uncertain about this prediction. Interpret the
-                            result carefully and do not treat it as medical advice.
+                            The model is uncertain about this prediction. Interpret the result carefully and do not treat it as medical advice.
                         </div>
                     {% endif %}
 
-                    <div class="result-message">
-                        {% if prediction == "fit" %}
-                            <h3>Fit Prediction</h3>
-                            <p>
-                                The entered values were classified as Fit by the model.
-                                Review the class probabilities and submitted information
-                                shown below.
-                            </p>
-                        {% elif prediction == "at-risk" %}
-                            <h3>At-risk Prediction</h3>
-                            <p>
-                                The entered values were classified as At-risk by the
-                                model. A qualified professional should be consulted for
-                                health concerns.
-                            </p>
-                        {% elif prediction == "unhealthy" %}
-                            <h3>Unhealthy Prediction</h3>
-                            <p>
-                                The entered values were classified as Unhealthy by the
-                                model. This result must not replace professional advice.
-                            </p>
-                        {% endif %}
+                    <div class="result-risk-scale {{ result_class }}">
+                        <div class="result-panel-heading">
+                            <span>RESULT INDICATOR</span>
+                            <h2>Health Risk Colour Scale</h2>
+                        </div>
+                        <div class="risk-scale-labels" aria-hidden="true">
+                            <span>Fit</span>
+                            <span>At-risk</span>
+                            <span>Unhealthy</span>
+                        </div>
+                        <div class="risk-scale-track" role="img" aria-label="The predicted result is {{ prediction|title }} on a scale from Fit to Unhealthy">
+                            <span class="risk-segment risk-segment-fit"></span>
+                            <span class="risk-segment risk-segment-at-risk"></span>
+                            <span class="risk-segment risk-segment-unhealthy"></span>
+                            <span class="risk-scale-marker"><span>{{ prediction|title }}</span></span>
+                        </div>
+                        <div class="risk-scale-legend">
+                            <span><i class="legend-dot legend-fit"></i>Fit</span>
+                            <span><i class="legend-dot legend-at-risk"></i>At-risk</span>
+                            <span><i class="legend-dot legend-unhealthy"></i>Unhealthy</span>
+                        </div>
+                        <p>The marker shows the category selected by the model. The colour scale is a visual summary of the predicted class, not a clinical measurement.</p>
+                    </div>
+
+                    <div class="prediction-meta-strip">
+                        <div><span>Model</span><strong>{{ model_name }}</strong></div>
+                        <div><span>Version</span><strong>{{ model_version }}</strong></div>
+                        <div><span>Processing</span><strong>{{ processing_time_ms }} ms</strong></div>
+                        <div><span>Validation Balanced Accuracy</span><strong>{{ model_metadata.get("validation_balanced_accuracy", 0)|round(4) }}</strong></div>
                     </div>
                 </div>
 
-                {% if class_probabilities %}
-                    <div class="details-card">
-                        <h2>Probability for Every Class</h2>
-
-                        <div class="probability-list">
-                            {% for class_name, probability in class_probabilities.items() %}
-                                <div class="probability-row">
-                                    <div class="probability-heading">
-                                        <span>{{ class_name|title }}</span>
-                                        <strong>{{ probability }}%</strong>
-                                    </div>
-
-                                    <div class="probability-track" aria-hidden="true">
-                                        <div
-                                            class="probability-fill probability-animation"
-                                            data-width="{{ probability }}%"
-                                        ></div>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
-
-                        <p class="probability-note">
-                            These values are model probabilities. They do not represent
-                            medical certainty.
-                        </p>
+                <div class="submitted-panel">
+                    <div class="result-panel-heading">
+                        <span>INPUT RECORD</span>
+                        <h2>Submitted Information</h2>
                     </div>
-                {% endif %}
-
-                <div class="details-card">
-                    <h2>Submitted Information</h2>
-
                     <div class="details-grid">
                         {% for feature_name, field in numeric_fields.items() %}
                             <div class="detail-item">
                                 <span>{{ field["label"] }}</span>
-                                <strong>
-                                    {{ input_data[feature_name] }} {{ field["unit"] }}
-                                </strong>
+                                <strong>{{ input_data[feature_name] }}</strong>
+                                <small>{{ field["unit"] }}</small>
                             </div>
                         {% endfor %}
-
                         {% for feature_name, field in categorical_fields.items() %}
                             <div class="detail-item">
                                 <span>{{ field["label"] }}</span>
-                                <strong>
-                                    {{ field["options"][input_data[feature_name]] }}
-                                </strong>
+                                <strong>{{ field["options"][input_data[feature_name]] }}</strong>
+                                <small>Selected value</small>
                             </div>
                         {% endfor %}
                     </div>
                 </div>
 
-                <div class="details-card metadata-card">
-                    <h2>Prediction Information</h2>
-                    <div class="metadata-grid">
-                        <div>
-                            <span>Model</span>
-                            <strong>{{ model_name }}</strong>
-                        </div>
-                        <div>
-                            <span>Model version</span>
-                            <strong>{{ model_version }}</strong>
-                        </div>
-                        <div>
-                            <span>Processing time</span>
-                            <strong>{{ processing_time_ms }} ms</strong>
-                        </div>
+                <div class="result-footer-row">
+                    <div class="disclaimer-card">
+                        <strong>Important Notice</strong>
+                        <p>This prediction is generated by a machine learning model. It is not a medical diagnosis and should not be used for automatic medical decisions.</p>
                     </div>
-                </div>
-
-                <div class="result-actions">
-                    <a
-                        href="{{ url_for('home') }}#prediction-form"
-                        class="primary-button"
-                    >
-                        Make Another Prediction
-                    </a>
-
-                    <a href="{{ url_for('about') }}" class="secondary-button">
-                        About the System
-                    </a>
-                </div>
-
-                <div class="disclaimer-card">
-                    <h3>Important Notice</h3>
-                    <p>
-                        This prediction is generated by a machine learning model. It is not
-                        a medical diagnosis and should not be used for automatic medical
-                        decisions.
-                    </p>
+                    <div class="result-actions">
+                        <a href="{{ url_for('home') }}#prediction-form" class="primary-button">Make Another Prediction</a>
+                        <a href="{{ url_for('about') }}" class="secondary-button">About the System</a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -175,8 +174,11 @@
 
     <footer class="main-footer">
         <div class="container footer-content">
-            <p>Student Health Risk Prediction System</p>
-            <p>Trained, designed and developed by Rakindu Fernando</p>
+            <div class="footer-brand">
+                <img src="{{ url_for('static', filename='images/logo.svg') }}" alt="" class="footer-logo">
+                <div><p>Student Health Risk Prediction System</p><small>Trained, designed and developed by Rakindu Fernando</small></div>
+            </div>
+            <div class="footer-badges" aria-label="System summary"><span>XGBoost Model</span><span>13 Inputs</span><span>3 Classes</span></div>
         </div>
     </footer>
 
