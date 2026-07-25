@@ -28,9 +28,9 @@ logging.basicConfig(
 )
 
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.environ.get(
-    "FLASK_SECRET_KEY",
-    "local-development-key-change-before-deployment",
+app.config["SECRET_KEY"] = (
+    os.environ.get("FLASK_SECRET_KEY")
+    or secrets.token_hex(32)
 )
 app.config["MAX_CONTENT_LENGTH"] = MAX_REQUEST_SIZE_BYTES
 app.config["CSRF_ENABLED"] = True
@@ -108,7 +108,7 @@ def predict():
     if request.form.get("consent") != "accepted":
         return render_home(
             error_message=(
-                "Please confirm that you understand this is an educational "
+                "Please confirm that you understand this is a machine learning "
                 "prediction and not a medical diagnosis."
             ),
             previous_data=request.form,
