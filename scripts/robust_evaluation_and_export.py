@@ -312,7 +312,7 @@ for class_number, class_name in enumerate(label_encoder.classes_):
     )
     plt.close()
 
-# Single-record prediction speed evidence using 100 records.
+# Single-record prediction speed evidence using 20 records.
 speed_sample = X_test.sample(
     n=min(20, len(X_test)),
     random_state=RANDOM_STATE,
@@ -400,7 +400,12 @@ metadata = {
     ),
 }
 
-with (MODELS_FOLDER / "model_metadata.json").open(
+if SAVE_AS_FINAL_MODEL:
+    metadata_file = MODELS_FOLDER / "model_metadata.json"
+else:
+    metadata_file = RESULTS_FOLDER / "candidate_model_metadata.json"
+
+with metadata_file.open(
     "w",
     encoding="utf-8",
 ) as output_stream:
