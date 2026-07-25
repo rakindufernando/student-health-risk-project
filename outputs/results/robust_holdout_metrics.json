@@ -1,0 +1,26 @@
+{
+  "training_rows": 483060,
+  "validation_rows": 103514,
+  "test_rows": 103514,
+  "training_seconds": 10.41373029999977,
+  "validation": {
+    "accuracy": 0.8695345557122708,
+    "balanced_accuracy": 0.9074992912886047,
+    "macro_f1": 0.7492799682508108
+  },
+  "internal_test": {
+    "accuracy": 0.870829066599687,
+    "balanced_accuracy": 0.909392704870002,
+    "macro_f1": 0.7512031462996043
+  },
+  "best_parameters": {
+    "n_estimators": 300,
+    "max_depth": 5,
+    "learning_rate": 0.03,
+    "subsample": 0.8,
+    "colsample_bytree": 0.8,
+    "min_child_weight": 1,
+    "gamma": 0.0,
+    "reg_lambda": 1.0
+  }
+}
