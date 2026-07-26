@@ -2,7 +2,7 @@
   "training_rows": 483060,
   "validation_rows": 103514,
   "test_rows": 103514,
-  "training_seconds": 10.41373029999977,
+  "training_seconds": 15.130285400002322,
   "validation": {
     "accuracy": 0.8695345557122708,
     "balanced_accuracy": 0.9074992912886047,
