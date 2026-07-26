@@ -1,0 +1,7 @@
+{
+  "number_of_runs": 20,
+  "average_ms": 11.639,
+  "median_ms": 11.687,
+  "minimum_ms": 10.547,
+  "maximum_ms": 12.905
+}
