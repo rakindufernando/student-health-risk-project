@@ -50,10 +50,22 @@ Categorical inputs
 
 ## Recorded model evaluation
 
-- Primary metric is balanced accuracy
-- Validation balanced accuracy is approximately 0.9097 in the existing comparison
-- Macro F1 is approximately 0.7541 in the existing comparison
-- An internal holdout result must be generated using `scripts/robust_evaluation_and_export.py`
+### Deployed model
+
+- Primary metric: Balanced Accuracy
+- Validation Balanced Accuracy: approximately 0.9097
+- Validation Macro F1: approximately 0.7541
+
+### Robust internal evaluation
+
+- Validation Balanced Accuracy: approximately 0.9075
+- Validation Macro F1: approximately 0.7493
+- Untouched internal-test Balanced Accuracy: approximately 0.9094
+- Untouched internal-test Macro F1: approximately 0.7512
+- Untouched internal-test Accuracy: approximately 0.8708
+- Multiclass Brier score: approximately 0.1509
+
+The robust evaluation uses a separate internal test set that was not used during model tuning. The complete results are stored in `outputs/results/robust_holdout_metrics.json`.
 
 ## Why balanced accuracy is used
 
