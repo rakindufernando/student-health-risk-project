@@ -193,7 +193,12 @@
                             <p>Balanced accuracy is the primary metric, supported by Macro F1 and the generalisation gap.</p>
                             <div class="workflow-score-row">
                                 <span><strong>{{ model_metadata.get("validation_balanced_accuracy", 0)|round(4) }}</strong> Balanced accuracy</span>
-                                <span><strong>{{ model_metadata.get("macro_f1_score", 0)|round(4) }}</strong> Macro F1</span>
+                                <span><strong>{{
+                                                    model_metadata.get(
+                                                        "validation_macro_f1",
+                                                        model_metadata.get("macro_f1_score", 0)
+                                                    )|round(4)
+                                                }}</strong> Macro F1</span>
                             </div>
                         </div>
                     </article>

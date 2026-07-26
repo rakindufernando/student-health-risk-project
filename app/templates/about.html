@@ -47,7 +47,12 @@
                     <h2>{{ model_metadata.get("model_name", "XGBoost") }}</h2>
                     <div class="about-model-metrics">
                         <div><span>Balanced Accuracy</span><strong>{{ model_metadata.get("validation_balanced_accuracy", 0)|round(4) }}</strong></div>
-                        <div><span>Macro F1</span><strong>{{ model_metadata.get("macro_f1_score", 0)|round(4) }}</strong></div>
+                        <div><span>Macro F1</span><strong>{{
+                                                                model_metadata.get(
+                                                                    "validation_macro_f1",
+                                                                    model_metadata.get("macro_f1_score", 0)
+                                                                )|round(4)
+                                                            }}</strong></div>
                         <div><span>Classes</span><strong>3</strong></div>
                     </div>
                 </div>
