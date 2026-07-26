@@ -25,7 +25,10 @@ def test_home_page_loads(client):
 def test_about_page_loads(client):
     response = client.get("/about")
     assert response.status_code == 200
-    assert b"About the Student Health Risk Predictor" in response.data
+    assert (
+    b"A compact prediction system built around a trained XGBoost pipeline."
+    in response.data
+)
 
 
 def test_health_route_is_ready(client):
